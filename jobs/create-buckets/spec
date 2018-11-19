@@ -1,0 +1,19 @@
+---
+name: create-buckets
+
+templates:
+  post-deploy.erb: bin/post-deploy
+
+consumes:
+- name: minio
+  type: server
+
+packages:
+- mc
+
+properties:
+  buckets:
+    description: list of buckets to create
+  protocol:
+    description: set protocol for talking to minio
+    default: http

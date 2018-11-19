@@ -1,0 +1,9 @@
+---
+name: prometheus_dashboard
+
+packages: []
+
+templates:
+  dashboard.json: dashboard.json
+
+properties: {}

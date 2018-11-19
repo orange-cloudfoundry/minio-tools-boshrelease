@@ -1,0 +1,17 @@
+---
+name: mc
+
+templates:
+  pre-start.erb: bin/pre-start
+
+consumes:
+- name: minio
+  type: server
+
+packages:
+- mc
+
+properties:
+  protocol:
+    description: set protocol for talking to minio
+    default: http

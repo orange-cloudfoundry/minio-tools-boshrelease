@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+ACCESS_KEY="<%= link('minio').p('credential.accesskey') %>"
+SECRET_KEY="<%= link('minio').p('credential.secretkey') %>"
+PORT="<%= link('minio').p('port') %>"
+
+echo "export MC_HOSTS_myminio=<%= p("protocol") %>://$ACCESS_KEY:$SECRET_KEY@localhost:$PORT" >> /root/.bashrc
+
+cat >>/root/.bashrc <<EOF
+func mc() {
+	/var/vcap/packages/mc --insecure "$@"
+}
+
+EOF

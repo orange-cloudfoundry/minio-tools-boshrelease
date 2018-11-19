@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+export PATH=$PATH:/var/vcap/packages/mc
+
+DIR_STORE="/var/vcap/store/create-buckets"
+LOCK_FILE="${DIR_STORE}/lock"
+ACCESS_KEY="<%= link('minio').p('credential.accesskey') %>"
+SECRET_KEY="<%= link('minio').p('credential.secretkey') %>"
+PORT="<%= link('minio').p('port') %>"
+export MC_HOSTS_myminio=<%= p("protocol") %>://$ACCESS_KEY:$SECRET_KEY@localhost:$PORT
+
+<% if spec.bootstrap %>
+if [ ! -d "${DIR_STORE}" ]; then
+  mkdir "${DIR_STORE}"
+fi
+
+<% p('buckets').each do |bucket| %>
+if [ ! -f "${LOCK_FILE}-<%= bucket %>" ]; then
+    mc --insecure mb myminio/<%= bucket %>
+    echo "" > "${LOCK_FILE}-<%= bucket %>"
+fi
+<% end %>
+
+<% end %>
