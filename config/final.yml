@@ -1,4 +1,4 @@
-name: minio-tools-boshrelease
+name: minio-tools
 blobstore:
   provider: s3
   options:

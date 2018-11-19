@@ -1,9 +1,10 @@
 ---
-name: prometheus_dashboard
+name: minio_dashboards
 
 packages: []
 
 templates:
   dashboard.json: dashboard.json
+  component.json: component.json
 
 properties: {}

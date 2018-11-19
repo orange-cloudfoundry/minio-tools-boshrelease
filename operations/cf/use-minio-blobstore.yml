@@ -1,0 +1,168 @@
+# should be use after ops file: https://github.com/cloudfoundry/cf-deployment/blob/master/operations/use-external-blobstore.yml
+- type: replace
+  path: /releases/-
+  value:
+    name: minio
+    version: 2018-11-17T01-23-48Z
+    sha1: 1c28724a4f8a0a09a35041d26601db2dfd31b959
+    url: "https://bosh.io/d/github.com/minio/minio-boshrelease?v=2018-11-17T01-23-48Z"
+
+# minio tools permit to create buckets after deploy
+- type: replace
+  path: /releases/-
+  value:
+    name: minio-tools
+    version: "1.0.0"
+    sha1: b02c02d022201929ca4faae2afbd7f0b97624df4
+    url: ((repository_base))/minio-tools/minio-tools-((minio-tools.version))-((version-stemcell.os))-((version-stemcell.major)).tgz
+
+- type: replace
+  path: /addons/-
+  value:
+    name: add-minio-certificate
+    jobs:
+    - name: ca_certs
+      properties:
+        certs: ((minio_ssl.certificate))
+      release: os-conf
+
+
+# Add alias to resolve one healthy minio-server (use after in fog_connection)
+- type: replace
+  path: /addons/name=bosh-dns-aliases/jobs/name=bosh-dns-aliases/properties/aliases/-
+  value:
+    domain: minio-server.service.cf.internal
+    targets:
+    - deployment: cf
+      domain: bosh
+      instance_group: minio
+      network: default
+      query: q-s3 # means target only healthy minio-server
+
+# Minio release set itself is aliases for its servers, we don't want to override it
+- type: replace
+  path: /addons/name=bosh-dns-aliases/exclude?/jobs?/-
+  value:
+    name: minio-server
+    release: minio
+
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: minio
+    azs: [z1, z2, z3]
+    instances: 4
+    jobs:
+    - name: minio-server
+      release: minio
+      provides:
+        minio-server: {as: minio-link}
+        http_backend: nil
+      properties:
+        credential:
+          accesskey: ((minio_user.username))
+          secretkey: ((minio_user.password))
+        port: 9000
+        server_cert: ((minio_ssl.certificate))
+        server_key: ((minio_ssl.private_key))
+        ca_cert: ((service_cf_internal_ca.certificate))
+        dns_alias: minio-server.service.cf.internal
+    # create bucket at post-deploy which need to be activated: https://bosh.io/docs/post-deploy/
+    # This is activated by default on bosh-deployment
+    - name: create-buckets
+      release: minio-tools
+      consumes:
+        minio: {from: minio-link}
+      properties:
+        protocol: https
+        buckets:
+        - ((app_package_directory_key))
+        - ((buildpack_directory_key))
+        - ((droplet_directory_key))
+        - ((resource_directory_key))
+    # Job mc let you inspect minio when ssh as root
+    # e.g.: mc ls myminio
+    - name: mc
+      release: minio-tools
+      consumes:
+        minio: {from: minio-link}
+      properties:
+        protocol: https
+    networks:
+    - name: default
+    vm_type: default
+    persistent_disk_type: 100GB
+    stemcell: default
+
+
+- type: replace
+  path: /variables/-
+  value:
+    name: minio_ssl
+    options:
+      alternative_names:
+      - minio-server.service.cf.internal
+      - '*.minio-server.service.cf.internal'
+      ca: service_cf_internal_ca
+      common_name: minio-server.service.cf.internal
+    type: certificate
+
+- type: replace
+  path: /variables/-
+  value:
+    name: minio_user
+    type: user
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/buildpacks?/fog_connection
+  value: &blobstore-properties
+    provider: AWS
+    endpoint: https://minio-server.service.cf.internal:9000
+    aws_access_key_id: ((minio_user.username))
+    aws_secret_access_key: ((minio_user.password))
+    region: ""
+    path_style: true
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/droplets?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/packages?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/resource_pool?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/buildpacks?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/droplets?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/packages?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/resource_pool?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/buildpacks?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/droplets?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/packages?/fog_connection
+  value: *blobstore-properties
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/resource_pool?/fog_connection
+  value: *blobstore-properties

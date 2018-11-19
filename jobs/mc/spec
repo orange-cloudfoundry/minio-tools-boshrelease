@@ -2,7 +2,7 @@
 name: mc
 
 templates:
-  pre-start.erb: bin/pre-start
+  post-start.erb: bin/post-start
 
 consumes:
 - name: minio

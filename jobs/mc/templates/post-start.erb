@@ -9,8 +9,8 @@ PORT="<%= link('minio').p('port') %>"
 echo "export MC_HOSTS_myminio=<%= p("protocol") %>://$ACCESS_KEY:$SECRET_KEY@localhost:$PORT" >> /root/.bashrc
 
 cat >>/root/.bashrc <<EOF
-func mc() {
-	/var/vcap/packages/mc --insecure "$@"
+function mc() {
+	/var/vcap/packages/mc/mc --insecure "\$@"
 }
 
 EOF

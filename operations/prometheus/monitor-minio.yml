@@ -1,0 +1,65 @@
+# Add alias to resolve one healthy minio-server (use after in fog_connection)
+- type: replace
+  path: /addons/name=bosh-dns-aliases/jobs/name=bosh-dns-aliases/properties/aliases/-
+  value:
+    domain: minio-server.service.cf.internal
+    targets:
+    - deployment: cf
+      domain: bosh
+      instance_group: minio
+      network: control-plane
+      query: q-s3 # means target only healthy minio-server
+
+# minio tools permit to have grafana dashboards and prometheus alerts
+- type: replace
+  path: /releases/-
+  value:
+    name: minio-tools
+    version: "1.0.0"
+    sha1: b02c02d022201929ca4faae2afbd7f0b97624df4
+    url: ((repository_base))/minio-tools/minio-tools-((minio-tools.version))-((version-stemcell.os))-((version-stemcell.major)).tgz
+
+- type: replace
+  path: /addons/-
+  value:
+    name: add-minio-certificate
+    jobs:
+    - name: ca_certs
+      properties:
+        certs: ((minio_cert))
+      release: os-conf
+
+- type: replace
+  path: /instance_groups/name=prometheus2/jobs/name=prometheus2/properties/prometheus/scrape_configs/-
+  value:
+    job_name: minio
+    scrape_interval: 2m
+    scrape_timeout: 1m
+    metrics_path: /minio/prometheus/metrics
+    scheme: https
+    static_configs:
+    - targets: ['minio-server.service.cf.internal:9000']
+    relabel_configs:
+    - regex: (.*)
+      replacement: ((metrics_environment))
+      source_labels:
+      - __address__
+      target_label: environment
+
+# Prometheus Alerts
+- type: replace
+  path: /instance_groups/name=prometheus2/jobs/name=minio_alerts?/release
+  value: minio-tools
+
+- type: replace
+  path: /instance_groups/name=prometheus2/jobs/name=prometheus2/properties/prometheus/rule_files/-
+  value: /var/vcap/jobs/minio_alerts/*.yml
+
+# Grafana Dashboards
+- type: replace
+  path: /instance_groups/name=grafana/jobs/name=minio_dashboards?/release
+  value: minio-tools
+
+- type: replace
+  path: /instance_groups/name=grafana/jobs/name=grafana/properties/grafana/prometheus/dashboard_folders/name=Minio?/files/-
+  value: /var/vcap/jobs/minio_dashboards/*.json
