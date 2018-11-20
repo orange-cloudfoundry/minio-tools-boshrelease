@@ -14,7 +14,7 @@
     name: minio-tools
     version: "1.0.0"
     sha1: b02c02d022201929ca4faae2afbd7f0b97624df4
-    url: ((repository_base))/minio-tools/minio-tools-((minio-tools.version))-((version-stemcell.os))-((version-stemcell.major)).tgz
+    url: https://github.com/orange-cloudfoundry/minio-tools-boshrelease/releases/download/1.0.0/minio-tools-1.0.0.tgz
 
 - type: replace
   path: /addons/-
