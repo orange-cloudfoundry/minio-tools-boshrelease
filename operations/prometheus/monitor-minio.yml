@@ -15,9 +15,9 @@
   path: /releases/-
   value:
     name: minio-tools
-    version: "1.0.0"
-    sha1: b02c02d022201929ca4faae2afbd7f0b97624df4
-    url: https://github.com/orange-cloudfoundry/minio-tools-boshrelease/releases/download/1.0.0/minio-tools-1.0.0.tgz
+    version: "1.0.1"
+    sha1: b6bf5708e7a5bdc3de0af383a382c6dc2506c3d2
+    url: https://github.com/orange-cloudfoundry/minio-tools-boshrelease/releases/download/1.0.1/minio-tools-1.0.1.tgz
 
 - type: replace
   path: /addons/-
