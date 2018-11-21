@@ -23,9 +23,6 @@ properties:
     description: "Requests alert evaluation time"
     default: 2500
 
-  minio_alerts.disk_offline_quorum.nb_instances:
-    description: "number of nominal instances of minio"
-    default: 4
   minio_alerts.storage_space_exhausted.min_bytes:
     description: "number of minimal bytes for Storage space exhausted alert evaluation time"
     default: 10737418240

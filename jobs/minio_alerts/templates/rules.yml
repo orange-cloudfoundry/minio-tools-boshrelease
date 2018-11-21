@@ -2,40 +2,40 @@ groups:
 - name: minio-disk
   rules:
   - alert: MinioDiskOffline
-    expr: sum(minio_offline_disks) by(environment) != 0
+    expr: sum(minio_offline_disks) by(instance) != 0
     for: <%= p('minio_alerts.disk_offline.evaluation_time') %>
     labels:
       service: minio
       severity: warning
     annotations:
-      summary: "Disk(s) offline `{{$labels.environment}}`"
-      description: "Disk(s) offline `{{$labels.environment}}`, {{$value}} disks offline"
+      summary: "Disk(s) offline `{{$labels.instance}}`"
+      description: "Disk(s) offline `{{$labels.instance}}`, {{$value}} disks offline"
   - alert: MinioDiskOfflineQuorum
-    expr: sum(minio_offline_disks) by(environment) >= <%= p('minio_alerts.disk_offline_quorum.nb_instances') %>/2
+    expr: sum(minio_offline_disks) by(instance) >= sum(minio_total_disks) by(instance)/2
     for: <%= p('minio_alerts.disk_offline_quorum.evaluation_time') %>
     labels:
       service: minio
       severity: critical
     annotations:
-      summary: "Disk(s) offline break the quorum `{{$labels.environment}}`"
-      description: "Disk(s) offline break the quorum `{{$labels.environment}}` {{$value}}/<%= p('minio_alerts.disk_offline_quorum.nb_instances') %> offlines"
+      summary: "Disk(s) offline break the quorum `{{$labels.instance}}`"
+      description: "Disk(s) offline break the quorum `{{$labels.instance}}` {{$value}} offlines"
   - alert: StorageSpaceExhausted
     for: <%= p('minio_alerts.storage_space_exhausted.evaluation_time') %>
-    expr: sum(minio_disk_storage_free_bytes) by(environment) < <%= p('minio_alerts.storage_space_exhausted.min_bytes') %>
+    expr: sum(minio_disk_storage_free_bytes) by(instance) < <%= p('minio_alerts.storage_space_exhausted.min_bytes') %>
     labels:
       service: minio
       severity: critical
     annotations:
-      summary: "Free space threshold reached `{{$labels.environment}}`"
-      description: "Free space threshold reached `{{$labels.environment}}`, less than 10GB"
+      summary: "Free space threshold reached `{{$labels.instance}}`"
+      description: "Free space threshold reached `{{$labels.instance}}`, less than 10GB"
 - name: minio-requests
   rules:
   - alert: MinioRequestsTooHigh
-    expr: avg(irate(minio_http_requests_duration_seconds_bucket[5m])) by(environment) > <%= p('minio_alerts.requests.threshold') %>
+    expr: avg(irate(minio_http_requests_duration_seconds_bucket[5m])) by(instance) > <%= p('minio_alerts.requests.threshold') %>
     for: <%= p('minio_alerts.requests.evaluation_time') %>
     labels:
       service: minio
       severity: warning
     annotations:
-      summary: "Requests per second at minio `{{$labels.environment}}` is too high: {{$value}}req/s"
-      description: "Minio `{{$labels.environment}}` has processed {{$value}} requests per second during the last <%= p('minio_alerts.requests.evaluation_time') %>"
+      summary: "Requests per second at minio `{{$labels.instance}}` is too high: {{$value}}req/s"
+      description: "Minio `{{$labels.instance}}` has processed {{$value}} requests per second during the last <%= p('minio_alerts.requests.evaluation_time') %>"

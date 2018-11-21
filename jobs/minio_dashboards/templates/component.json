@@ -46,7 +46,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1542732389643,
+  "iteration": 1542803103035,
   "links": [
     {
       "asDropdown": true,
@@ -102,7 +102,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(go_goroutines{environment=~\"$environment\",job=~\"$instance\"}) by(environment)",
+          "expr": "avg(go_goroutines{instance=~\"$host\"}) by(instance)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "minio",
@@ -192,7 +192,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(go_gc_duration_seconds{environment=~\"$environment\",job=~\"$instance\"}) by(environment)",
+          "expr": "avg(go_gc_duration_seconds{instance=~\"$host\"}) by(instance)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "minio",
@@ -280,7 +280,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(go_memstats_heap_alloc_bytes{environment=~\"$environment\",job=~\"$instance\"}) by(environment)",
+          "expr": "avg(go_memstats_heap_alloc_bytes{instance=~\"$host\"}) by(instance)",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "minio",
@@ -371,7 +371,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(go_memstats_stack_sys_bytes{environment=~\"$environment\",job=~\"$instance\"}) by(environment)",
+          "expr": "avg(go_memstats_stack_sys_bytes{instance=~\"$host\"}) by(instance)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -438,33 +438,13 @@
         "datasource": "${DS_PROMETHEUS}",
         "hide": 0,
         "includeAll": false,
-        "label": "Environment",
-        "multi": false,
-        "name": "environment",
-        "options": [],
-        "query": "label_values(go_memstats_heap_alloc_bytes, environment)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "hide": 0,
-        "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "instance",
+        "name": "host",
         "options": [],
         "query": "label_values(minio_total_disks,instance)",
         "refresh": 1,
-        "regex": "/([a-zA-Z]{1,})/i",
+        "regex": "",
         "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
@@ -506,5 +486,5 @@
   "timezone": "browser",
   "title": "Minio: Component Metrics",
   "uid": "minio_component_metrics",
-  "version": 3
+  "version": 1
 }

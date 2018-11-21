@@ -59,7 +59,7 @@
   "gnetId": 6248,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1542734239984,
+  "iteration": 1542796658159,
   "links": [],
   "panels": [
     {
@@ -83,27 +83,26 @@
       "colorBackground": false,
       "colorValue": false,
       "colors": [
-        "rgba(245, 54, 54, 0.9)",
+        "#299c46",
         "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
+        "#d44a3a"
       ],
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Start time of the Minio server",
-      "format": "dtdurations",
+      "format": "none",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
         "show": false,
         "thresholdLabels": false,
-        "thresholdMarkers": false
+        "thresholdMarkers": true
       },
       "gridPos": {
         "h": 5,
-        "w": 16,
+        "w": 8,
         "x": 8,
         "y": 0
       },
-      "id": 1,
+      "id": 12,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -135,22 +134,109 @@
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
         "lineColor": "rgb(31, 120, 193)",
-        "show": true
+        "show": false
       },
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - max(process_start_time_seconds{environment=~\"$environment\",job=~\"$job\"})",
+          "expr": "sum(minio_total_disks{instance=~\"$instance\"}) by(instance)",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Start time of the Minio server",
-          "metric": "process_start_time_seconds",
-          "refId": "A",
-          "step": 60
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
-      "title": "Uptime",
+      "title": "Cluster size",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": true,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "${DS_PROMETHEUS}",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 13,
+      "interval": null,
+      "links": [],
+      "mappingType": 2,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "0",
+          "text": "OK",
+          "to": "0"
+        },
+        {
+          "from": "50",
+          "text": "NOK",
+          "to": "100"
+        },
+        {
+          "from": "1",
+          "text": "WARNING",
+          "to": "49"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "sum(minio_offline_disks{instance=~\"$instance\"}) by(instance)/sum(minio_total_disks{instance=~\"$instance\"}) by(instance)*100",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "100,50",
+      "title": "Ready",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -201,7 +287,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(minio_network_sent_bytes_total{environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_network_sent_bytes_total{instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Transmited:",
@@ -289,7 +375,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(minio_network_received_bytes_total{environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_network_received_bytes_total{instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Received:",
@@ -377,7 +463,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(minio_network_received_bytes_total{environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_network_received_bytes_total{instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Received: ",
@@ -386,7 +472,7 @@
           "step": 10
         },
         {
-          "expr": "rate(minio_network_sent_bytes_total{environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_network_sent_bytes_total{instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Transmited:",
@@ -472,7 +558,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"GET\",environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"GET\",instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "GET",
@@ -481,7 +567,7 @@
           "step": 4
         },
         {
-          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"POST\",environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"POST\",instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "POST",
@@ -490,7 +576,7 @@
           "step": 4
         },
         {
-          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"PUT\",environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"PUT\",instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "PUT",
@@ -499,7 +585,7 @@
           "step": 4
         },
         {
-          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"HEAD\",environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"HEAD\",instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "HEAD",
@@ -508,7 +594,7 @@
           "step": 4
         },
         {
-          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"DELETE\",environment=~\"$environment\",job=~\"$job\"}[5m])",
+          "expr": "rate(minio_http_requests_duration_seconds_sum{request_type=\"DELETE\",instance=~\"$instance\"}[5m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "DELETE",
@@ -594,14 +680,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(minio_total_disks{environment=~\"$environment\", job=~\"$job\"}) by(environment, job)",
+          "expr": "sum(minio_total_disks{instance=~\"$instance\"}) by(instance)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Total disks",
           "refId": "A"
         },
         {
-          "expr": "sum(minio_offline_disks{environment=~\"$environment\", job=~\"$job\"}) by(environment, job)",
+          "expr": "sum(minio_offline_disks{instance=~\"$instance\"}) by(instance)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Offline disks",
@@ -665,29 +751,9 @@
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "environment",
+        "name": "instance",
         "options": [],
-        "query": "label_values(minio_total_disks,environment)",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "job",
-        "options": [],
-        "query": "label_values(minio_total_disks,job)",
+        "query": "label_values(minio_total_disks,instance)",
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -731,5 +797,5 @@
   "timezone": "",
   "title": "Minio: dashboard",
   "uid": "minio_dashboard",
-  "version": 2
+  "version": 3
 }
