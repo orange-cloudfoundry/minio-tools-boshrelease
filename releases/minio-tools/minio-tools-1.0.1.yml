@@ -1,0 +1,27 @@
+name: minio-tools
+version: 1.0.1
+commit_hash: "3417938"
+uncommitted_changes: false
+jobs:
+- name: create-buckets
+  version: f44ab1c1f6134d3cc54ca2d3cbfbcfeceb970849
+  fingerprint: f44ab1c1f6134d3cc54ca2d3cbfbcfeceb970849
+  sha1: b8d4da0329f3b33f6df745b274136043247dc475
+- name: mc
+  version: 68113db13b7c39dc026eb3f32e1373c436763718
+  fingerprint: 68113db13b7c39dc026eb3f32e1373c436763718
+  sha1: d39489c6f943fd85d0d8775d881075d0d2124f3c
+- name: minio_alerts
+  version: db4f4f8db20510fece9189fdf8d005dd7a6400c3
+  fingerprint: db4f4f8db20510fece9189fdf8d005dd7a6400c3
+  sha1: 27289620c32ef235fad93f84b8d1b6f5d9271099
+- name: minio_dashboards
+  version: 71e009d2072ff7f14146867f4585c63cf80409dc
+  fingerprint: 71e009d2072ff7f14146867f4585c63cf80409dc
+  sha1: 7ec2217f474dbbe330436e147830018cf1396e7c
+packages:
+- name: mc
+  version: 2d5315f5883743ecb9ad60f67b367b9ff4f1c0f6
+  fingerprint: 2d5315f5883743ecb9ad60f67b367b9ff4f1c0f6
+  sha1: 408f8064ea2e2694f5f148c22e7e9eab805ee484
+  dependencies: []
