@@ -59,7 +59,7 @@
   "gnetId": 6248,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1542796658159,
+  "iteration": 1542818841793,
   "links": [],
   "panels": [
     {
@@ -622,7 +622,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -797,5 +797,5 @@
   "timezone": "",
   "title": "Minio: dashboard",
   "uid": "minio_dashboard",
-  "version": 3
+  "version": 4
 }
